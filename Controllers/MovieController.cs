@@ -155,7 +155,6 @@ namespace WebApp.Controllers
         {
             try
             {
-                Console.WriteLine(id);
                 UpdateMovie(id, Movie);
                 return RedirectToAction(nameof(Index));
             }
@@ -174,10 +173,18 @@ namespace WebApp.Controllers
         // POST: MovieController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, MovieModel Movie)
         {
             try
             {
+                _Connection.Open();
+                SqlCommand cmd = new SqlCommand("DELETE FROM Movies WHERE MovieID=@MovieID",
+                    _Connection);
+
+                cmd.Parameters.AddWithValue("@MovieID", id);
+                cmd.ExecuteNonQuery();
+
+                _Connection.Close();
                 return RedirectToAction(nameof(Index));
             }
             catch
